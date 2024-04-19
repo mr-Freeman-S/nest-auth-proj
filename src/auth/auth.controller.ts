@@ -31,7 +31,7 @@ export class AuthController {
     console.log(signUpDto);
     console.log();
     return this.authService.signUp(
-      signUpDto.username,
+      signUpDto.email,
       signUpDto.password,
       signUpDto.confirmPassword,
     );

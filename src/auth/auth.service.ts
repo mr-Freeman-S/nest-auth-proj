@@ -17,15 +17,19 @@ export class AuthService {
     private helperService: HelperService,
   ) {}
 
-  async signIn(
-    username: string,
-    pass: string,
-  ): Promise<{ access_token: string }> {
-    const user = await this.userService.user({ username });
-    if (user.password !== pass) {
+  async signIn(email: string, pass: string): Promise<{ access_token: string }> {
+    const user = await this.userService.user({ email });
+
+    const isValid = await this.helperService.compareHashData(
+      pass,
+      user.password,
+    );
+
+    if (isValid) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, username: user.username };
+
+    const payload = { sub: user.id, username: user.email };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -33,11 +37,11 @@ export class AuthService {
   }
 
   async signUp(
-    username: string,
+    email: string,
     password: string,
     confirmPassword: string,
   ): Promise<{ access_token: string }> {
-    await this.userService.getUserByUsernameThrow(username);
+    await this.userService.getUserByUsernameThrow(email);
     if (password !== confirmPassword) {
       throw new HttpException(
         AuthExceptions.PASSWORD_DOES_NOT_MATCH,
@@ -45,10 +49,10 @@ export class AuthService {
       );
     }
     const newUser = await this.userService.createUser({
-      username,
+      email,
       password: await this.helperService.hashData(password),
     });
-    const payload = { sub: newUser.id, username: newUser.username };
+    const payload = { sub: newUser.id, email: newUser.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
