@@ -5,13 +5,14 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { Public } from './constants';
 import { RegistrationDto } from './dto/registration.dto';
+import { refreshTokenDto } from './dto/refreshToken.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -31,10 +32,17 @@ export class AuthController {
     console.log(signUpDto);
     console.log();
     return this.authService.signUp(
-      signUpDto.email,
+      signUpDto.number,
       signUpDto.password,
       signUpDto.confirmPassword,
     );
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('refreshToken')
+  refreshToken(@Body() refreshToken: refreshTokenDto) {
+    return this.authService.refreshToken(refreshToken.refreshToken);
   }
 
   @UseGuards(AuthGuard)

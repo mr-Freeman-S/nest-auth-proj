@@ -9,7 +9,7 @@ export const AuthExceptions = {
   CODE_NOT_CORRECT: 'The code is not correct!',
   ACCESS_DENIED: 'access denied',
   TIME_HAS_EZPIRIED: 'The time for password recovery has expired',
-  EMAIL_NOT_CONFIRM: 'You have not confirmed email',
+  EMAIL_NOT_CONFIRM: 'You have not confirmed number',
   UNREGISTERED: 'Unregistered',
   USER_DO_NOT_HAVE_INFO: 'The user has no personal information',
   NOT_FOUND: 'Not found',

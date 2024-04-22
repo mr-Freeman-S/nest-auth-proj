@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { IS_PUBLIC_KEY, jwtConstants } from './constants';
+import { IS_PUBLIC_KEY } from './constants';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 
@@ -32,11 +32,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
+      request['user'] = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
       });
-
-      request['user'] = payload;
     } catch {
       throw new UnauthorizedException();
     }

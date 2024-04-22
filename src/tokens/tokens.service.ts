@@ -13,9 +13,9 @@ export class TokensService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
-  async generateTokens(email: string, id: string): Promise<IJwtTokens> {
+  async generateTokens(number: string, id: string): Promise<IJwtTokens> {
     const payLoad = {
-      email,
+      number,
       id,
     };
     const accessToken = await this.jwtService.signAsync(payLoad, {
@@ -35,7 +35,7 @@ export class TokensService {
   }
 
   async validateTokens(token: string): Promise<User> {
-    return this.jwtService.verifyAsync(token, {
+    return await this.jwtService.verifyAsync(token, {
       secret: this.configService.getOrThrow('JWT_SECRET'),
     });
   }

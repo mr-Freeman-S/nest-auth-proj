@@ -54,10 +54,10 @@ export class UserService {
     });
   }
 
-  async getUserByUsername(email: string): Promise<User> {
+  async getUserByUsername(number: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: {
-        email,
+        number,
       },
     });
     if (!user) {
@@ -69,10 +69,11 @@ export class UserService {
     return user;
   }
 
-  async getUserByUsernameThrow(email: string): Promise<User> {
+  async getUserByUsernameThrow(number: string): Promise<User> {
+    console.log('number', number);
     const user = await this.prisma.user.findUnique({
       where: {
-        email,
+        number,
       },
     });
 

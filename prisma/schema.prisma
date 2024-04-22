@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id           String @id @default(uuid())
-  email        String @unique
+  number       String @unique
   password     String
   refreshToken Token?
 }
@@ -25,4 +25,10 @@ model Token {
   userId       String @unique
   user         User   @relation(fields: [userId], references: [id])
   refreshToken String @unique
+}
+
+model Candidate {
+  id       String @id @default(uuid())
+  number   String @unique
+  password String
 }
