@@ -1,6 +1,7 @@
 import { TwilioModule } from 'nestjs-twilio';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Module } from '@nestjs/common';
+import { TwilioSMSService } from './twilioSMS.servise';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { Module } from '@nestjs/common';
       inject: [ConfigService],
     }),
   ],
-  providers: [twilioSMSService],
+  providers: [TwilioSMSService],
 })
-export class twilioSMSService {}
+export class twilioSMSModule {}

@@ -7,7 +7,8 @@ import { PrismaModule } from './core/prisma/prismaModule.module';
 import { HelperModule } from './helper/helper.module';
 import { TokensModule } from './tokens/tokens.module';
 import { ConfigModule } from '@nestjs/config';
-import { twilioSMSService } from './twilioSMS/twilioSMS.module';
+import { CandidateModule } from './candidate/candidate.module';
+import { twilioSMSModule } from './twilioSMS/twilioSMS.module';
 
 @Module({
   imports: [
@@ -16,11 +17,12 @@ import { twilioSMSService } from './twilioSMS/twilioSMS.module';
     PrismaModule,
     HelperModule,
     TokensModule,
-    twilioSMSService,
+    twilioSMSModule,
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       isGlobal: true,
     }),
+    CandidateModule,
   ],
   controllers: [AppController],
   providers: [AppService],

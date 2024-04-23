@@ -11,8 +11,9 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { Public } from './constants';
-import { RegistrationDto } from './dto/registration.dto';
+import { RegistrationDto, VerificationDto } from './dto/registration.dto';
 import { refreshTokenDto } from './dto/refreshToken.dto';
+import { ResetPasswordDto } from './dto/restorePassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -36,6 +37,22 @@ export class AuthController {
       signUpDto.password,
       signUpDto.confirmPassword,
     );
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('verifyCandidate')
+  verifyCandidate(@Body() verificationDto: VerificationDto) {
+    return this.authService.verifyCandidate(
+      verificationDto.number,
+      verificationDto.verifyCode,
+    );
+  }
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('restorePassword')
+  restorePassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.restorePassword(resetPasswordDto.number);
   }
 
   @Public()

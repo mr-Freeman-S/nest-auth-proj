@@ -28,7 +28,9 @@ model Token {
 }
 
 model Candidate {
-  id       String @id @default(uuid())
-  number   String @unique
-  password String
+  id             String   @id @default(uuid())
+  number         String   @unique
+  password       String
+  verify_code    String
+  expirationData DateTime
 }

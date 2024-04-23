@@ -10,6 +10,8 @@ import { HelperModule } from '../helper/helper.module';
 import { TokensService } from '../tokens/tokens.service';
 import { PrismaService } from '../core/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { CandidateService } from '../candidate/candidate.service';
+import { TwilioSMSService } from '../twilioSMS/twilioSMS.servise';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { ConfigService } from '@nestjs/config';
     TokensService,
     PrismaService,
     ConfigService,
+    CandidateService,
+    TwilioSMSService,
   ],
 })
 export class AuthModule {}

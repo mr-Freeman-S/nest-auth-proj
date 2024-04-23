@@ -14,3 +14,14 @@ export class RegistrationDto {
   @IsNotEmpty()
   confirmPassword: string;
 }
+
+export class VerificationDto {
+  @IsNotEmpty()
+  @Length(3, 30)
+  @IsPhoneNumber()
+  number: string;
+
+  @Length(6, 6)
+  @IsNotEmpty()
+  verifyCode: string;
+}
