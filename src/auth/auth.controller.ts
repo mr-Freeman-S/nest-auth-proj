@@ -14,6 +14,8 @@ import { Public } from './constants';
 import { RegistrationDto, VerificationDto } from './dto/registration.dto';
 import { refreshTokenDto } from './dto/refreshToken.dto';
 import { ResetPasswordDto } from './dto/restorePassword.dto';
+import { NewPasswordDto } from './dto/newPassword.dto';
+import { SignInDto } from './dto/signIn.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +24,8 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  signIn(@Body() signInDto: SignInDto) {
+    return this.authService.signIn(signInDto.number, signInDto.password);
   }
 
   @Public()
@@ -60,6 +62,13 @@ export class AuthController {
   @Post('refreshToken')
   refreshToken(@Body() refreshToken: refreshTokenDto) {
     return this.authService.refreshToken(refreshToken.refreshToken);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Post('newPassword')
+  newPassword(@Body() newPasswordDto: NewPasswordDto) {
+    return this.authService.newPasswordSet(newPasswordDto);
   }
 
   @UseGuards(AuthGuard)

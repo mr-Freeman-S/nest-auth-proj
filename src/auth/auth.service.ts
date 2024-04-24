@@ -11,6 +11,7 @@ import { TokensService } from '../tokens/tokens.service';
 import { IJwtTokens } from '../tokens/dto/tokens.dto';
 import { CandidateService } from '../candidate/candidate.service';
 import { TwilioSMSService } from '../twilioSMS/twilioSMS.servise';
+import { NewPasswordDto } from './dto/newPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,7 @@ export class AuthService {
   ) {}
 
   async signIn(number: string, pass: string): Promise<IJwtTokens> {
+    console.log(number);
     const user = await this.userService.user({ number });
 
     const isValid = await this.helperService.compareHashData(
@@ -56,7 +58,7 @@ export class AuthService {
       );
     }
 
-    const confirmCode = String(Math.floor(100000 + Math.random() * 900000));
+    const confirmCode = this.helperService.generateCode();
     await this.twilioSMSService.sendSMS(number, confirmCode);
     await this.candidateService.createCandidate({
       number,
@@ -110,8 +112,8 @@ export class AuthService {
     return tokens;
   }
 
-  async restorePassword(number: string): Promise<{ status: 'OK' }> {
-    const verifyCode = String(Math.floor(100000 + Math.random() * 900000));
+  async restorePassword(number: string): Promise<IJwtTokens> {
+    const verifyCode = this.helperService.generateCode();
 
     const user = await this.userService.user({ number });
 
@@ -120,6 +122,41 @@ export class AuthService {
     }
 
     await this.twilioSMSService.sendSMS(number, verifyCode);
+    await this.candidateService.createCandidate({
+      number: user.number,
+      verify_code: verifyCode,
+      password: user.password,
+    });
+    return await this.tokenService.generateTokens(number, user.id);
+  }
+
+  async newPasswordSet(data: NewPasswordDto): Promise<{ status: 'OK' }> {
+    const candidate = await this.candidateService.getCandidate({
+      number: data.number,
+    });
+    const user = await this.userService.user({ number: data.number });
+    if (data.password !== data.confirmPassword) {
+      throw new HttpException(
+        AuthExceptions.PASSWORD_DOES_NOT_MATCH,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (!candidate) {
+      throw new HttpException(
+        AuthExceptions.USERS_NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
+      );
+    } else if (data.verify_code !== candidate.verify_code) {
+      throw new HttpException(
+        AuthExceptions.CODE_NOT_CORRECT,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.userService.updateUser({
+      where: { id: user.id },
+      data: { ...user, password: data.password },
+    });
+    await this.candidateService.removeCandidate(candidate.id);
 
     return { status: 'OK' };
   }

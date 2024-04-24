@@ -13,4 +13,8 @@ export class HelperService {
   ): Promise<boolean> {
     return bcrypt.compare(firstValue, secondHashValue);
   }
+
+  generateCode() {
+    return String(Math.floor(100000 + Math.random() * 900000));
+  }
 }
