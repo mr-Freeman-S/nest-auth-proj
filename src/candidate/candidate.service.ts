@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Candidate, Prisma } from '@prisma/client';
 import { PrismaService } from '../core/prisma/prisma.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class CandidateService {
@@ -21,6 +22,14 @@ export class CandidateService {
   ): Promise<Candidate> {
     return this.prisma.candidate.findUnique({
       where: candidateWhereUniqueInput,
+    });
+  }
+
+  @Cron(CronExpression.EVERY_2_HOURS)
+  async deleteCandidate() {
+    const currentDate = new Date();
+    await this.prisma.candidate.deleteMany({
+      where: { expirationData: { lt: currentDate } },
     });
   }
 }

@@ -60,10 +60,15 @@ export class AuthService {
 
     const confirmCode = this.helperService.generateCode();
     await this.twilioSMSService.sendSMS(number, confirmCode);
+
+    const now = new Date();
+    const expirationData = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+
     await this.candidateService.createCandidate({
       number,
       password: await this.helperService.hashData(password),
       verify_code: confirmCode,
+      expirationData: expirationData,
     });
     return { status: 'OK' };
   }
@@ -116,6 +121,8 @@ export class AuthService {
     const verifyCode = this.helperService.generateCode();
 
     const user = await this.userService.user({ number });
+    const now = new Date();
+    const expirationData = new Date(now.getTime() + 2 * 60 * 60 * 1000);
 
     if (!user) {
       throw new Error('User Not Found');
@@ -126,6 +133,7 @@ export class AuthService {
       number: user.number,
       verify_code: verifyCode,
       password: user.password,
+      expirationData: expirationData,
     });
     return await this.tokenService.generateTokens(number, user.id);
   }
@@ -154,7 +162,10 @@ export class AuthService {
     }
     await this.userService.updateUser({
       where: { id: user.id },
-      data: { ...user, password: data.password },
+      data: {
+        ...user,
+        password: await this.helperService.hashData(data.password),
+      },
     });
     await this.candidateService.removeCandidate(candidate.id);
 
